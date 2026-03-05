@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* 必须用相对路径，不能用 @repo/ui-tokens */
+@import "../../../../packages/ui-tokens/css/variables.css";
+@import "../../../../packages/ui-tokens/css/theme.css";
+
+/* 扫描 workspace 包中的 Tailwind 类 */
+@source "../../../../packages/ui/src/**/*.tsx";
+@source "../../../../packages/pages/src/**/*.tsx";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}

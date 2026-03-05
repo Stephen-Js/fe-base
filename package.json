@@ -1,0 +1,38 @@
+{
+  "name": "fe-base",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0",
+      "@types/react": "~19.1.10"
+    }
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:pc": "pnpm --filter @repo/desktop tauri:dev",
+    "dev:web": "pnpm dev --filter @repo/web",
+    "dev:mobile": "pnpm dev --filter @repo/mobile",
+    "build": "node scripts/sync-public-assets.js && turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean",
+    "check": "biome check --write .",
+    "ui:add": "node packages/ui/scripts/add-component.js",
+    "build:tokens": "pnpm --filter @repo/ui-tokens build:tokens",
+    "build:icons": "pnpm --filter @repo/ui generate-icons && biome check --write packages/ui/src/components/custom/icons/index.tsx",
+    "sync:assets": "node scripts/sync-public-assets.js",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "lefthook": "^2.0.15",
+    "turbo": "^2.3.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

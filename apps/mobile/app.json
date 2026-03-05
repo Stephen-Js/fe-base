@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Fe Base",
+    "slug": "fe-base",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "scheme": "febase",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.febase.app"
+    },
+    "android": {
+      "adaptiveIcon": { "backgroundColor": "#ffffff" },
+      "package": "com.febase.app"
+    },
+    "plugins": ["expo-router"]
+  }
+}

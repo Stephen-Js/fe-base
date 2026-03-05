@@ -1,0 +1,21 @@
+{
+  "name": "@repo/ui-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./css/*": "./css/*.css",
+    "./*": {
+      "types": "./src/*.ts",
+      "import": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "build:tokens": "node style-dictionary.config.js"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "style-dictionary": "^4.3.2",
+    "typescript": "^5.7.2"
+  }
+}

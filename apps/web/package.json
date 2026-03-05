@@ -1,0 +1,39 @@
+{
+  "name": "@repo/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@repo/api": "workspace:*",
+    "@repo/hooks": "workspace:*",
+    "@repo/i18n": "workspace:*",
+    "@repo/pages": "workspace:*",
+    "@repo/services": "workspace:*",
+    "@repo/store": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "lucide-react": "^0.511.0",
+    "next": "^16.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/react": "~19.1.10",
+    "@types/react-dom": "~19.1.5",
+    "tailwindcss": "^4.1.0",
+    "tw-animate-css": "^1.0.0",
+    "typescript": "^5.7.2"
+  }
+}
