@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { SplitLayout, SplitLayoutMain, SplitLayoutSidebar } from '@repo/ui/custom/split-layout'
+import { NiceModalProvider } from '@/components/nice-modal-provider'
 import { SidebarContent } from '@/components/SidebarContent'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body className={inter.className}>
-        <AppLayout>{children}</AppLayout>
+        <NiceModalProvider>
+          <AppLayout>{children}</AppLayout>
+        </NiceModalProvider>
       </body>
     </html>
   )

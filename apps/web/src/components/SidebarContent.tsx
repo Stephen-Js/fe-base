@@ -1,7 +1,7 @@
 'use client'
 
 import { SplitLayoutToggle, useSplitLayout } from '@repo/ui/custom/split-layout'
-import { Home, LayoutDashboard } from 'lucide-react'
+import { Home, LayoutDashboard, Table2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 function SidebarContent() {
@@ -10,7 +10,8 @@ function SidebarContent() {
 
   const navItems = [
     { icon: Home, label: '工作台', href: '/' },
-    { icon: LayoutDashboard, label: '组件库', href: '/components' },
+    { icon: LayoutDashboard, label: '组件库', href: '/ui-library' },
+    { icon: Table2, label: '表格表单联动', href: '/table-form-demo' },
   ]
 
   return (
