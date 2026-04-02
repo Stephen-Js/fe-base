@@ -76,6 +76,11 @@ export function DragLayoutPage() {
 
   const { layout, setLayout, undo, redo, canUndo, canRedo } = useLayoutHistory(getInitialLayout())
 
+  // 调试：追踪 layout 变化
+  useEffect(() => {
+    console.log('layout changed:', layout)
+  }, [layout])
+
   // 持久化布局到 localStorage
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -162,9 +167,19 @@ export function DragLayoutPage() {
       </header>
 
       {/* 主内容区域 - 画布 + 右侧组件库 */}
-      <div className="flex flex-1 overflow-hidden">
+      <div 
+        className="flex flex-1 overflow-hidden"
+        onDragOver={(e) => {
+          console.log('Main area onDragOver', e.target)
+        }}
+      >
         {/* 画布区域 */}
-        <main className="flex-1 overflow-auto p-6">
+        <main 
+          className="flex-1 overflow-auto p-6"
+          onDragOver={(e) => {
+            console.log('main onDragOver', e.target)
+          }}
+        >
           <Canvas
             layout={layout}
             onLayoutChange={setLayout}
