@@ -62,27 +62,31 @@ const STORAGE_KEY = 'drag-layout-v1'
  */
 export function DragLayoutPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // 从 localStorage 加载初始布局
-  const getInitialLayout = (): LayoutItem[] => {
-    if (typeof window === 'undefined') return []
+  const { layout, setLayout, undo, redo, canUndo, canRedo } = useLayoutHistory([])
+
+  // 客户端水合后从 localStorage 加载布局
+  useEffect(() => {
+    setIsHydrated(true)
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
-      return saved ? JSON.parse(saved) : []
+      if (saved) {
+        setLayout(JSON.parse(saved))
+      }
     } catch {
-      return []
+      // ignore
     }
-  }
-
-  const { layout, setLayout, undo, redo, canUndo, canRedo } = useLayoutHistory(getInitialLayout())
+  }, [setLayout])
 
   // 持久化布局到 localStorage
   useEffect(() => {
+    if (!isHydrated) return
     const timer = setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(layout))
     }, 500)
     return () => clearTimeout(timer)
-  }, [layout])
+  }, [layout, isHydrated])
 
   // 删除卡片
   const handleDeleteCard = useCallback(
