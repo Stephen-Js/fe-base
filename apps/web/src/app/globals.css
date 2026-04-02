@@ -15,3 +15,7 @@
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
 }
+
+/* React Grid Layout Styles */
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";

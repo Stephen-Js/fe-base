@@ -13,7 +13,7 @@ import {
 } from '@repo/ui/custom/data-table'
 import { JsonForm, type JsonFormConfig } from '@repo/ui/custom/json-form'
 import { modal } from '@repo/ui/custom/modal'
-import { Pencil } from 'lucide-react'
+import { Code2, Pencil } from 'lucide-react'
 import { useState } from 'react'
 
 // 用户数据类型
@@ -140,6 +140,99 @@ const columns: ColumnConfig[] = [
   },
 ]
 
+// 表单字段配置
+const formFieldsConfig: JsonFormConfig['fields'] = [
+  {
+    name: 'name',
+    type: 'text',
+    label: '姓名',
+    placeholder: '请输入姓名',
+    required: true,
+    grid: { span: 12 },
+  },
+  {
+    name: 'email',
+    type: 'email',
+    label: '邮箱',
+    placeholder: '请输入邮箱',
+    required: true,
+    grid: { span: 12 },
+  },
+  {
+    name: 'phone',
+    type: 'text',
+    label: '手机号',
+    placeholder: '请输入手机号',
+    grid: { span: 12 },
+  },
+  {
+    name: 'role',
+    type: 'select',
+    label: '角色',
+    options: [
+      { label: '管理员', value: 'admin' },
+      { label: '普通用户', value: 'user' },
+      { label: '访客', value: 'guest' },
+    ],
+    grid: { span: 6 },
+  },
+  {
+    name: 'status',
+    type: 'select',
+    label: '状态',
+    options: [
+      { label: '激活', value: 'active' },
+      { label: '未激活', value: 'inactive' },
+    ],
+    grid: { span: 6 },
+  },
+]
+
+// 操作按钮配置
+const actionsButtonsConfig: ActionsConfig['buttons'] = [
+  {
+    id: 'edit',
+    label: '编辑',
+    icon: 'Pencil',
+    variant: 'ghost',
+  },
+]
+
+// 页面完整配置（用于后端返回）
+const pageConfig = {
+  id: 'table-form-demo',
+  title: '表格表单联动场景',
+  description: '点击表格操作栏的编辑按钮，弹窗显示对应的表单进行数据编辑',
+  table: {
+    columns,
+    actions: {
+      id: 'actions',
+      header: '操作',
+      fixed: 'right',
+      buttons: actionsButtonsConfig,
+    },
+    pagination: {
+      show: true,
+      defaultPageSize: 10,
+      showTotal: true,
+    },
+    toolbar: {
+      search: { show: true, placeholder: '搜索用户...' },
+      columnSettings: { show: true },
+    },
+  },
+  form: {
+    fields: formFieldsConfig,
+    submit: { text: '保存' },
+  },
+  modal: {
+    title: '编辑用户',
+    width: 500,
+    confirmText: '保存',
+    cancelText: '取消',
+  },
+}
+
 /**
  * 表格表单联动场景展示页面
  * 演示表格操作栏编辑按钮点击后弹窗显示表单的场景
@@ -149,52 +242,7 @@ export function TableFormDemoPage() {
 
   // 根据表格列生成表单字段配置
   const getFormConfig = (rowData: RowData): JsonFormConfig => ({
-    fields: [
-      {
-        name: 'name',
-        type: 'text',
-        label: '姓名',
-        placeholder: '请输入姓名',
-        required: true,
-        grid: { span: 12 },
-      },
-      {
-        name: 'email',
-        type: 'email',
-        label: '邮箱',
-        placeholder: '请输入邮箱',
-        required: true,
-        grid: { span: 12 },
-      },
-      {
-        name: 'phone',
-        type: 'text',
-        label: '手机号',
-        placeholder: '请输入手机号',
-        grid: { span: 12 },
-      },
-      {
-        name: 'role',
-        type: 'select',
-        label: '角色',
-        options: [
-          { label: '管理员', value: 'admin' },
-          { label: '普通用户', value: 'user' },
-          { label: '访客', value: 'guest' },
-        ],
-        grid: { span: 6 },
-      },
-      {
-        name: 'status',
-        type: 'select',
-        label: '状态',
-        options: [
-          { label: '激活', value: 'active' },
-          { label: '未激活', value: 'inactive' },
-        ],
-        grid: { span: 6 },
-      },
-    ],
+    fields: formFieldsConfig,
     submit: {
       text: '保存',
     },
@@ -274,7 +322,7 @@ export function TableFormDemoPage() {
       </div>
 
       {/* 表格区域 */}
-      <div className="rounded-lg border border-border bg-card">
+      <div className="mb-12 rounded-lg border border-border bg-card">
         <DataTable
           data={usersData}
           columns={columns}
@@ -289,6 +337,118 @@ export function TableFormDemoPage() {
             columnSettings: { show: true },
           }}
         />
+      </div>
+
+      {/* 配置 JSON 展示区域 */}
+      <div className="mb-8">
+        <div className="mb-4 flex items-center gap-2">
+          <Code2 className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold">页面配置 JSON</h2>
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          以下配置可由后端接口返回，前端根据配置动态渲染页面组件。这是实现低代码/配置驱动页面的基础。
+        </p>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* 表格配置 */}
+          <div className="rounded-lg border border-border bg-card">
+            <div className="border-b border-border px-4 py-3">
+              <h3 className="font-medium">表格配置 (Table Config)</h3>
+              <p className="text-xs text-muted-foreground">定义表格列、操作按钮、分页等</p>
+            </div>
+            <div className="max-h-[400px] overflow-auto p-4">
+              <pre className="text-xs">{JSON.stringify(pageConfig.table, null, 2)}</pre>
+            </div>
+          </div>
+
+          {/* 表单配置 */}
+          <div className="rounded-lg border border-border bg-card">
+            <div className="border-b border-border px-4 py-3">
+              <h3 className="font-medium">表单配置 (Form Config)</h3>
+              <p className="text-xs text-muted-foreground">定义弹窗表单字段、布局、验证等</p>
+            </div>
+            <div className="max-h-[400px] overflow-auto p-4">
+              <pre className="text-xs">{JSON.stringify(pageConfig.form, null, 2)}</pre>
+            </div>
+          </div>
+        </div>
+
+        {/* 完整配置 */}
+        <div className="mt-6 rounded-lg border border-border bg-card">
+          <div className="border-b border-border px-4 py-3">
+            <h3 className="font-medium">完整页面配置 (Page Config)</h3>
+            <p className="text-xs text-muted-foreground">
+              后端接口可返回的完整配置结构，包含页面元数据、表格、表单、弹窗等所有配置
+            </p>
+          </div>
+          <div className="max-h-[500px] overflow-auto p-4">
+            <pre className="text-xs">{JSON.stringify(pageConfig, null, 2)}</pre>
+          </div>
+        </div>
+
+        {/* 配置说明 */}
+        <div className="mt-6 rounded-lg border border-border bg-muted/50 p-4">
+          <h3 className="mb-3 font-medium">配置字段说明</h3>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <h4 className="text-sm font-medium text-foreground">表格列配置 (columns)</h4>
+              <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                <li>
+                  <code className="text-primary">id</code> - 列唯一标识
+                </li>
+                <li>
+                  <code className="text-primary">header</code> - 表头文字
+                </li>
+                <li>
+                  <code className="text-primary">accessor</code> - 数据字段名
+                </li>
+                <li>
+                  <code className="text-primary">sortable</code> - 是否可排序
+                </li>
+                <li>
+                  <code className="text-primary">cellRenderer</code> - 单元格渲染配置
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">表单字段配置 (fields)</h4>
+              <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                <li>
+                  <code className="text-primary">name</code> - 字段名
+                </li>
+                <li>
+                  <code className="text-primary">type</code> - 字段类型
+                </li>
+                <li>
+                  <code className="text-primary">label</code> - 标签文字
+                </li>
+                <li>
+                  <code className="text-primary">grid</code> - 栅格布局配置
+                </li>
+                <li>
+                  <code className="text-primary">options</code> - 选项配置
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-foreground">操作按钮配置 (buttons)</h4>
+              <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                <li>
+                  <code className="text-primary">id</code> - 按钮标识
+                </li>
+                <li>
+                  <code className="text-primary">label</code> - 按钮文字
+                </li>
+                <li>
+                  <code className="text-primary">icon</code> - 图标名称
+                </li>
+                <li>
+                  <code className="text-primary">variant</code> - 按钮样式
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
