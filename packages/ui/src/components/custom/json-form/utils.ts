@@ -2,6 +2,7 @@
  * JsonForm 工具函数
  */
 
+import type { CSSProperties } from 'react'
 import { z } from 'zod'
 import type { ApiConfig, FieldConfig, FormData, JsonFormConfig } from './types'
 
@@ -40,21 +41,25 @@ export function getDefaultValues(fields: FieldConfig[]): FormData {
 
 /**
  * 计算字段网格样式
+ * 返回 CSS 样式对象而非 Tailwind 类名，避免动态类名无法被 Tailwind 识别的问题
  */
-export function getGridStyle(grid?: FieldConfig['grid'], columns = 12): string {
+export function getGridStyle(grid?: FieldConfig['grid'], columns = 12): CSSProperties {
   if (!grid) {
-    return 'col-span-full'
+    return { gridColumn: '1 / -1' }
   }
 
   const span = grid.span ?? columns
   const offset = grid.offset ?? 0
 
-  const classes = [`col-span-${span}`]
-  if (offset > 0) {
-    classes.push(`col-start-${offset + 1}`)
+  const style: CSSProperties = {
+    gridColumn: `span ${span} / span ${span}`,
   }
 
-  return classes.join(' ')
+  if (offset > 0) {
+    style.gridColumnStart = offset + 1
+  }
+
+  return style
 }
 
 /**

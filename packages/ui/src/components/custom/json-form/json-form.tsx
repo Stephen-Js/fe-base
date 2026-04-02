@@ -168,7 +168,7 @@ export function JsonForm({
             const gridStyle = getGridStyle(field.grid, config.columns)
 
             return (
-              <div key={field.name} className={gridStyle}>
+              <div key={field.name} style={gridStyle}>
                 <FieldRenderer field={field} control={form.control} />
               </div>
             )
