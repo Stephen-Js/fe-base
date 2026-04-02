@@ -12,10 +12,8 @@ export function ComponentSidebar({
   const components = Object.values(componentRegistry)
 
   const handleDragStart = (e: React.DragEvent, componentType: string) => {
-    console.log('handleDragStart called', componentType)
     e.dataTransfer.setData('componentType', componentType)
     e.dataTransfer.effectAllowed = 'copy'
-    console.log('dataTransfer data set:', e.dataTransfer.getData('componentType'))
   }
 
   const width = collapsed ? '64px' : '280px'
