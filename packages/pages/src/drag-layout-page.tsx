@@ -5,7 +5,7 @@
 
 'use client'
 
-import { type ColumnConfig, DataTable } from '@repo/ui/custom/data-table'
+import { type ActionsConfig, type ColumnConfig, DataTable } from '@repo/ui/custom/data-table'
 import {
   Canvas,
   type ComponentRegistry,
@@ -13,7 +13,9 @@ import {
   type LayoutItem,
   useLayoutHistory,
 } from '@repo/ui/custom/drag-layout'
-import { ArrowLeft, Redo2, RotateCcw, Undo2 } from 'lucide-react'
+import { JsonForm, type JsonFormConfig } from '@repo/ui/custom/json-form'
+import { modal } from '@repo/ui/custom/modal'
+import { ArrowLeft, Pencil, Redo2, RotateCcw, Undo2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 // 示例表格数据
@@ -31,6 +33,47 @@ const sampleTableColumns: ColumnConfig[] = [
   { id: 'status', header: '状态', accessor: 'status' },
 ]
 
+// 表格二号数据
+const table2Data = [
+  { id: '1', productName: '笔记本电脑', price: '¥5999', stock: 156 },
+  { id: '2', productName: '无线鼠标', price: '¥129', stock: 423 },
+  { id: '3', productName: '机械键盘', price: '¥399', stock: 87 },
+  { id: '4', productName: '显示器', price: '¥1899', stock: 65 },
+  { id: '5', productName: '耳机', price: '¥299', stock: 234 },
+]
+
+const table2Columns: ColumnConfig[] = [
+  { id: 'productName', header: '产品名称', accessor: 'productName' },
+  { id: 'price', header: '价格', accessor: 'price' },
+  { id: 'stock', header: '库存', accessor: 'stock', align: 'center' },
+]
+
+// 表格二号表单配置
+const table2FormFields: JsonFormConfig['fields'] = [
+  {
+    name: 'productName',
+    type: 'text',
+    label: '产品名称',
+    placeholder: '请输入产品名称',
+    required: true,
+    grid: { span: 12 },
+  },
+  {
+    name: 'price',
+    type: 'text',
+    label: '价格',
+    placeholder: '请输入价格',
+    grid: { span: 6 },
+  },
+  {
+    name: 'stock',
+    type: 'number',
+    label: '库存',
+    placeholder: '请输入库存数量',
+    grid: { span: 6 },
+  },
+]
+
 // 组件注册表配置
 const componentRegistry: ComponentRegistry = {
   table: {
@@ -46,6 +89,65 @@ const componentRegistry: ComponentRegistry = {
           <DataTable
             data={sampleTableData.slice(0, visibleRows)}
             columns={sampleTableColumns}
+            pagination={{ show: false }}
+          />
+        </div>
+      )
+    },
+  },
+  table2: {
+    type: 'table2',
+    name: '表格二号',
+    defaultSize: { w: 6, h: 5 },
+    minSize: { w: 5, h: 4 },
+    render: ({ width, height }) => {
+      const visibleRows = Math.max(3, Math.floor(height / 50))
+
+      // 操作列配置
+      const actions: ActionsConfig = {
+        id: 'actions',
+        header: '操作',
+        fixed: 'right',
+        buttons: [
+          {
+            id: 'edit',
+            label: '编辑',
+            icon: <Pencil className="h-4 w-4" />,
+            variant: 'ghost',
+            onClick: (row) => {
+              let currentFormData: Record<string, unknown> = { ...row }
+
+              modal.confirm({
+                title: '编辑产品',
+                width: 450,
+                confirmText: '保存',
+                cancelText: '取消',
+                content: (
+                  <div className="py-4">
+                    <JsonForm
+                      config={{ fields: table2FormFields, submit: false }}
+                      defaultValues={row}
+                      onValuesChange={(values) => {
+                        currentFormData = { ...row, ...values }
+                      }}
+                    />
+                  </div>
+                ),
+                onConfirm: async () => {
+                  console.log('保存数据:', currentFormData)
+                },
+              })
+            },
+          },
+        ],
+      }
+
+      return (
+        <div style={{ width, height: '100%' }} className="overflow-auto">
+          <DataTable
+            data={table2Data.slice(0, visibleRows)}
+            columns={table2Columns}
+            actions={actions}
             pagination={{ show: false }}
           />
         </div>
