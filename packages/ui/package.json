@@ -15,6 +15,7 @@
     "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.511.0"
   },
   "peerDependencies": {
