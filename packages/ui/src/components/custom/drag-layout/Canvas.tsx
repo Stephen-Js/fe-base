@@ -39,9 +39,10 @@ export function Canvas({ layout, onLayoutChange, componentRegistry, onDeleteCard
         isDroppingRef.current = false
       }, 100)
 
-      onLayoutChange([newItem] as LayoutItem[])
+      // 追加新组件到现有布局
+      onLayoutChange([...layout, newItem] as LayoutItem[])
     },
-    [componentRegistry, onLayoutChange]
+    [componentRegistry, layout, onLayoutChange]
   )
 
   const handleDropDragOver = useCallback((e: React.DragEvent) => {
