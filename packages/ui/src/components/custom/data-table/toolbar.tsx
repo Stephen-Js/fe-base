@@ -98,34 +98,34 @@ const Pagination: React.FC<{
 
   // 生成页码数组
   const getPageNumbers = () => {
-    const pages: (number | 'ellipsis')[] = []
+    const pages: { id: string; type: 'page' | 'ellipsis'; value?: number }[] = []
     const maxVisible = 7
 
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
+        pages.push({ id: `page-${i}`, type: 'page', value: i })
       }
     } else {
       if (current <= 4) {
         for (let i = 1; i <= 5; i++) {
-          pages.push(i)
+          pages.push({ id: `page-${i}`, type: 'page', value: i })
         }
-        pages.push('ellipsis')
-        pages.push(totalPages)
+        pages.push({ id: 'ellipsis-right', type: 'ellipsis' })
+        pages.push({ id: `page-${totalPages}`, type: 'page', value: totalPages })
       } else if (current >= totalPages - 3) {
-        pages.push(1)
-        pages.push('ellipsis')
+        pages.push({ id: 'page-1', type: 'page', value: 1 })
+        pages.push({ id: 'ellipsis-left', type: 'ellipsis' })
         for (let i = totalPages - 4; i <= totalPages; i++) {
-          pages.push(i)
+          pages.push({ id: `page-${i}`, type: 'page', value: i })
         }
       } else {
-        pages.push(1)
-        pages.push('ellipsis')
+        pages.push({ id: 'page-1', type: 'page', value: 1 })
+        pages.push({ id: 'ellipsis-left', type: 'ellipsis' })
         for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i)
+          pages.push({ id: `page-${i}`, type: 'page', value: i })
         }
-        pages.push('ellipsis')
-        pages.push(totalPages)
+        pages.push({ id: 'ellipsis-right', type: 'ellipsis' })
+        pages.push({ id: `page-${totalPages}`, type: 'page', value: totalPages })
       }
     }
 
@@ -178,27 +178,27 @@ const Pagination: React.FC<{
           <ChevronLeft className="h-4 w-4" />
         </button>
 
-        {getPageNumbers().map((page, index) =>
-          page === 'ellipsis' ? (
+        {getPageNumbers().map((item) =>
+          item.type === 'ellipsis' ? (
             <span
-              key={`ellipsis-${page}-${index}`}
+              key={item.id}
               className="flex h-9 w-9 items-center justify-center text-sm text-muted-foreground"
             >
               ...
             </span>
           ) : (
             <button
-              key={page}
+              key={item.id}
               type="button"
-              onClick={() => onChange(page)}
+              onClick={() => onChange(item.value!)}
               className={cn(
                 'inline-flex h-9 w-9 items-center justify-center rounded-md border text-sm font-medium ring-offset-background transition-colors',
-                current === page
+                current === item.value
                   ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
               )}
             >
-              {page}
+              {item.value}
             </button>
           )
         )}
@@ -549,15 +549,20 @@ export const TableSkeleton: React.FC<{
   columns?: number
   className?: string
 }> = ({ rows = 5, columns = 4, className }) => {
+  // Generate stable keys for skeleton elements
+  const skeletonRows = React.useMemo(() => {
+    return Array.from({ length: rows }, (_, rowIdx) => ({
+      id: `row-${rowIdx}`,
+      cells: Array.from({ length: columns }, (_, colIdx) => `cell-${rowIdx}-${colIdx}`),
+    }))
+  }, [rows, columns])
+
   return (
     <div className={cn('space-y-3 p-4', className)}>
-      {Array.from({ length: rows }).map((_, rowIndex) => (
-        <div key={`skeleton-row-${rowIndex}`} className="flex items-center gap-4">
-          {Array.from({ length: columns }).map((_, colIndex) => (
-            <div
-              key={`skeleton-col-${rowIndex}-${colIndex}`}
-              className="h-8 flex-1 animate-pulse rounded-md bg-muted"
-            />
+      {skeletonRows.map((row) => (
+        <div key={row.id} className="flex items-center gap-4">
+          {row.cells.map((cellId) => (
+            <div key={cellId} className="h-8 flex-1 animate-pulse rounded-md bg-muted" />
           ))}
         </div>
       ))}
