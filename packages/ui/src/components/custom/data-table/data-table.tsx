@@ -11,7 +11,7 @@ import * as React from 'react'
 import { ActionButton as ActionButtonComponent, Cell } from './cell-renderer'
 import { TableEmpty, TablePagination, TableSkeleton, TableToolbar } from './toolbar'
 import type { ActionsConfig, CellValue, ColumnConfig, RowData, SortDirection } from './types'
-import { filterData, getNestedValue, paginateData, searchData, sortData } from './utils'
+import { getNestedValue, paginateData, searchData, sortData } from './utils'
 
 // 表格组件 Props 接口
 export interface DataTableProps<T extends RowData = RowData> {
@@ -56,6 +56,12 @@ export interface DataTableProps<T extends RowData = RowData> {
     defaultPageSize?: number
     showTotal?: boolean
     showJumper?: boolean
+    mode?: 'client' | 'server'
+    current?: number
+    pageSize?: number
+    total?: number
+    onChange?: (page: number, pageSize: number) => void
+    onPageSizeChange?: (pageSize: number) => void
   }
   /** 工具栏配置 */
   toolbar?: {
@@ -96,7 +102,6 @@ function getAlignmentClass(align?: 'left' | 'center' | 'right' | 'start' | 'end'
     case 'right':
     case 'end':
       return 'text-right'
-    case 'start':
     default:
       return 'text-left'
   }
@@ -327,6 +332,12 @@ export function DataTable<T extends RowData = RowData>({
     isIndeterminate: false,
   })
 
+  const isServerPagination = paginationConfig.mode === 'server'
+  const currentPage = isServerPagination ? (paginationConfig.current ?? 1) : paginationState.page
+  const currentPageSize = isServerPagination
+    ? (paginationConfig.pageSize ?? paginationConfig.defaultPageSize ?? 20)
+    : paginationState.pageSize
+
   // 计算处理后的数据
   const processedData = React.useMemo(() => {
     let result = [...data]
@@ -360,8 +371,25 @@ export function DataTable<T extends RowData = RowData>({
       }
     }
 
-    return paginateData(processedData, paginationState.page, paginationState.pageSize)
-  }, [processedData, paginationState, paginationConfig.show])
+    if (isServerPagination) {
+      return {
+        data: processedData,
+        total: paginationConfig.total ?? processedData.length,
+        page: currentPage,
+        pageSize: currentPageSize,
+        totalPages: Math.max(1, Math.ceil((paginationConfig.total ?? 0) / currentPageSize)),
+      }
+    }
+
+    return paginateData(processedData, currentPage, currentPageSize)
+  }, [
+    processedData,
+    currentPage,
+    currentPageSize,
+    isServerPagination,
+    paginationConfig.show,
+    paginationConfig.total,
+  ])
 
   // 全选状态更新
   React.useEffect(() => {
@@ -531,7 +559,7 @@ export function DataTable<T extends RowData = RowData>({
   // 渲染行
   const renderRows = () => {
     return paginatedData.data.map((row, rowIndex) => {
-      const originalIndex = (paginationState.page - 1) * paginationState.pageSize + rowIndex
+      const originalIndex = (currentPage - 1) * currentPageSize + rowIndex
       const isSelected = selection.selectedRows.has(originalIndex)
       const isEven = rowIndex % 2 === 0
 
@@ -631,12 +659,27 @@ export function DataTable<T extends RowData = RowData>({
       {/* 分页 */}
       <TablePagination
         config={paginationConfig}
-        current={paginationState.page}
-        pageSize={paginationState.pageSize}
+        current={currentPage}
+        pageSize={currentPageSize}
         total={paginatedData.total}
         totalPages={paginatedData.totalPages}
-        onChange={(page) => setPaginationState((prev) => ({ ...prev, page }))}
-        onPageSizeChange={(pageSize) => setPaginationState({ page: 1, pageSize })}
+        onChange={(page) => {
+          if (isServerPagination) {
+            paginationConfig.onChange?.(page, currentPageSize)
+            return
+          }
+
+          setPaginationState((prev) => ({ ...prev, page }))
+        }}
+        onPageSizeChange={(pageSize) => {
+          if (isServerPagination) {
+            paginationConfig.onPageSizeChange?.(pageSize)
+            paginationConfig.onChange?.(1, pageSize)
+            return
+          }
+
+          setPaginationState({ page: 1, pageSize })
+        }}
       />
     </div>
   )
