@@ -1,3 +1,1 @@
-// 业务服务层入口
-// 示例: export { userService } from './user-service'
-export {}
+export { mockLogin, type LoginCredentials, type LoginResult } from './auth-service'

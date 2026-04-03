@@ -1,3 +1,1 @@
-// Zustand store 入口
-// 示例: export { useAppStore } from './app-store'
-export {}
+export { AUTH_TOKEN_KEY, useAuthStore } from './auth-store'

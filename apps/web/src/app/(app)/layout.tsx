@@ -5,19 +5,19 @@
 
 'use client'
 
+import { useAuthGuard } from '@repo/hooks'
 import { SplitLayout, SplitLayoutMain, SplitLayoutSidebar } from '@repo/ui/custom/split-layout'
 import { NiceModalProvider } from '@/components/nice-modal-provider'
 import { SidebarContent } from '@/components/SidebarContent'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  // TODO: 添加登录状态检查，未登录时重定向到 /login
-  // const router = useRouter()
-  // const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
-  // useEffect(() => {
-  //   if (!isLoggedIn) {
-  //     router.push('/login')
-  //   }
-  // }, [isLoggedIn, router])
+  const { isAuthenticated, isHydrated } = useAuthGuard({
+    mode: 'protected',
+  })
+
+  if (!isHydrated || !isAuthenticated) {
+    return null
+  }
 
   return (
     <NiceModalProvider>

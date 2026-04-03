@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@repo/api": "workspace:*",
+    "@repo/services": "workspace:*",
     "@repo/store": "workspace:*",
     "@repo/types": "workspace:*"
   },

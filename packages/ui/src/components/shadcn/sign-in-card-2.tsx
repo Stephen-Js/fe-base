@@ -6,6 +6,17 @@ import { ArrowRight, Eye, EyeClosed, Lock, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
+export type SignInCardCredentials = {
+  username: string
+  password: string
+}
+
+type SignInCardProps = {
+  isLoading?: boolean
+  errorMessage?: string
+  onSubmit?: (credentials: SignInCardCredentials) => Promise<void> | void
+}
+
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (
     <input
@@ -22,11 +33,10 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   )
 }
 
-export function Component() {
+export function Component({ isLoading = false, errorMessage, onSubmit }: SignInCardProps) {
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [focusedInput, setFocusedInput] = useState<string | null>(null)
   const [rememberMe, setRememberMe] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -49,10 +59,12 @@ export function Component() {
     mouseY.set(0)
   }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    setIsLoading(true)
-    setTimeout(() => setIsLoading(false), 2000)
+    await onSubmit?.({
+      username,
+      password,
+    })
   }
 
   return (
@@ -157,13 +169,13 @@ export function Component() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    Sign in to your account to continue
+                    使用默认账号登录工作台
                   </motion.p>
                 </div>
 
                 {/* Form */}
                 <form className="space-y-5" onSubmit={handleSubmit}>
-                  {/* Email Field */}
+                  {/* Username Field */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -174,15 +186,15 @@ export function Component() {
                         <Mail className="w-5 h-5" />
                       </div>
                       <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        type="text"
+                        placeholder="请输入账号"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         className={cn(
                           'pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500',
-                          focusedInput === 'email' && 'border-purple-500/50 bg-purple-500/5'
+                          focusedInput === 'username' && 'border-purple-500/50 bg-purple-500/5'
                         )}
-                        onFocus={() => setFocusedInput('email')}
+                        onFocus={() => setFocusedInput('username')}
                         onBlur={() => setFocusedInput(null)}
                       />
                     </div>
@@ -200,7 +212,7 @@ export function Component() {
                       </div>
                       <Input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Password"
+                        placeholder="请输入密码"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className={cn(
@@ -224,6 +236,16 @@ export function Component() {
                     </div>
                   </motion.div>
 
+                  {errorMessage ? (
+                    <motion.p
+                      className="text-sm text-red-300"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      {errorMessage}
+                    </motion.p>
+                  ) : null}
+
                   {/* Remember Me & Forgot Password */}
                   <motion.div
                     className="flex items-center justify-between text-sm"
@@ -246,7 +268,7 @@ export function Component() {
                       href="#"
                       className="text-purple-400 hover:text-purple-300 transition-colors"
                     >
-                      Forgot password?
+                      默认账号：admin / 123456
                     </Link>
                   </motion.div>
 
