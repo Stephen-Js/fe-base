@@ -6,13 +6,15 @@
 'use client'
 
 import { type ActionsConfig, type ColumnConfig, DataTable } from '@repo/ui/custom/data-table'
-import { JsonForm, type JsonFormConfig } from '@repo/ui/custom/json-form'
-import { modal, NiceModal } from '@repo/ui/custom/modal'
+import { JsonForm } from '@repo/ui/custom/json-form'
+import { modal } from '@repo/ui/custom/modal'
+import { ThreePaneLayout } from '@repo/ui/custom/three-pane-layout'
 import { buttonVariants } from '@repo/ui/shadcn/button'
 import {
   Bell,
   Calendar,
   CheckCircle,
+  Columns3,
   Eye,
   FileText,
   Home,
@@ -56,6 +58,14 @@ const componentsData: ComponentInfo[] = [
     category: 'data',
     status: 'stable',
     path: '@repo/ui/custom/data-table',
+  },
+  {
+    id: 'three-pane-layout',
+    name: 'ThreePaneLayout',
+    description: '三栏布局组件，支持左栏窄条折叠和右栏完全隐藏后贴边展开',
+    category: 'layout',
+    status: 'stable',
+    path: '@repo/ui/custom/three-pane-layout',
   },
   {
     id: 'button',
@@ -359,6 +369,13 @@ export function ComponentsPage() {
             path="@repo/ui/custom/data-table"
           />
           <ComponentCard
+            name="ThreePaneLayout"
+            description="三栏工作台布局组件，支持双侧边栏折叠"
+            icon={<Columns3 className="h-6 w-6" />}
+            category="布局"
+            path="@repo/ui/custom/three-pane-layout"
+          />
+          <ComponentCard
             name="Button"
             description="按钮组件，支持多种变体和尺寸"
             icon={<Plus className="h-6 w-6" />}
@@ -379,6 +396,52 @@ export function ComponentsPage() {
             category="表单"
             path="@repo/ui/custom/json-form"
           />
+        </div>
+      </div>
+
+      <div className="mb-12">
+        <h2 className="mb-4 text-xl font-semibold">ThreePaneLayout 组件</h2>
+        <div className="rounded-lg border border-border bg-card p-6">
+          <div className="h-[360px] overflow-hidden rounded-xl border border-border bg-background">
+            <ThreePaneLayout leftWidth="220px" rightWidth="260px">
+              <ThreePaneLayout.LeftSidebar className="bg-muted/30">
+                <div className="flex items-center justify-between border-b border-border p-3">
+                  <div>
+                    <div className="text-sm font-medium">左侧栏</div>
+                    <div className="text-xs text-muted-foreground">折叠后缩成窄条</div>
+                  </div>
+                  <ThreePaneLayout.LeftToggle />
+                </div>
+                <div className="space-y-2 p-3 text-sm">
+                  <div className="rounded-lg border border-dashed border-border p-3">菜单 1</div>
+                  <div className="rounded-lg border border-dashed border-border p-3">菜单 2</div>
+                </div>
+              </ThreePaneLayout.LeftSidebar>
+              <ThreePaneLayout.Main>
+                <div className="flex h-full flex-1 items-center justify-center bg-muted/20 p-6 text-center">
+                  <div>
+                    <div className="text-sm font-medium">主区域</div>
+                    <div className="text-xs text-muted-foreground">
+                      右侧折叠后，主区域会自动扩展
+                    </div>
+                  </div>
+                </div>
+              </ThreePaneLayout.Main>
+              <ThreePaneLayout.RightSidebar className="bg-muted/30">
+                <div className="flex items-center justify-between border-b border-border p-3">
+                  <div>
+                    <div className="text-sm font-medium">右侧栏</div>
+                    <div className="text-xs text-muted-foreground">折叠后完全隐藏</div>
+                  </div>
+                  <ThreePaneLayout.RightToggle />
+                </div>
+                <div className="space-y-2 p-3 text-sm">
+                  <div className="rounded-lg border border-dashed border-border p-3">配置项 A</div>
+                  <div className="rounded-lg border border-dashed border-border p-3">配置项 B</div>
+                </div>
+              </ThreePaneLayout.RightSidebar>
+            </ThreePaneLayout>
+          </div>
         </div>
       </div>
 

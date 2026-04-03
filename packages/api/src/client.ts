@@ -1,9 +1,30 @@
 import type { ApiResponse } from '@repo/types'
 import axios, { type AxiosRequestConfig } from 'axios'
 
+interface RuntimeEnv {
+  API_URL?: string
+  API_TIMEOUT?: string
+}
+
+function getRuntimeEnv(): RuntimeEnv {
+  if (typeof globalThis === 'undefined') {
+    return {}
+  }
+
+  const maybeProcess = (
+    globalThis as typeof globalThis & {
+      process?: { env?: RuntimeEnv }
+    }
+  ).process
+
+  return maybeProcess?.env ?? {}
+}
+
+const runtimeEnv = getRuntimeEnv()
+
 export const apiClient = axios.create({
-  baseURL: typeof window !== 'undefined' ? '/api' : process.env.API_URL,
-  timeout: Number(process.env.API_TIMEOUT) || 30000,
+  baseURL: typeof window !== 'undefined' ? '/api' : runtimeEnv.API_URL,
+  timeout: Number(runtimeEnv.API_TIMEOUT) || 30000,
   headers: { 'Content-Type': 'application/json' },
 })
 

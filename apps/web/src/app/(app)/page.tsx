@@ -18,6 +18,12 @@ export default function HomePage() {
         >
           表格表单联动
         </Link>
+        <Link
+          href="/drag-layout-scene-2"
+          className="rounded-lg bg-accent px-4 py-2 text-accent-foreground transition-colors hover:bg-accent/80"
+        >
+          拖拽布局场景 2
+        </Link>
       </div>
     </main>
   )

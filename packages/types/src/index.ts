@@ -18,3 +18,30 @@ export interface PaginatedData<T> {
   page: number
   pageSize: number
 }
+
+/** 布局尺寸结构 */
+export interface LayoutSize {
+  w: number
+  h: number
+}
+
+/** 左侧组件列表项 */
+export interface ComponentPaletteItem {
+  id: string
+  type: string
+  name: string
+  description: string
+  category: string
+  tags: string[]
+  icon: string
+  thumbnail?: string
+  defaultSize: LayoutSize
+  minSize: LayoutSize
+  configVersion: string
+  hasDetail: boolean
+}
+
+/** 左侧组件列表响应数据 */
+export interface ComponentPaletteListData {
+  list: ComponentPaletteItem[]
+}

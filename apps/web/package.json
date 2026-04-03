@@ -20,7 +20,9 @@
     "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
+    "@tanstack/react-query": "^5.96.1",
     "lucide-react": "^0.511.0",
+    "msw": "^2.12.14",
     "next": "^16.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -37,5 +39,10 @@
     "tailwindcss": "^4.1.0",
     "tw-animate-css": "^1.0.0",
     "typescript": "^5.7.2"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

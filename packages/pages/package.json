@@ -10,6 +10,8 @@
     }
   },
   "dependencies": {
+    "@repo/api": "workspace:*",
+    "@tanstack/react-query": "^5.90.3",
     "@repo/ui": "workspace:*",
     "@repo/hooks": "workspace:*",
     "@repo/store": "workspace:*",
