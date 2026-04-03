@@ -25,6 +25,7 @@
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
     "class-variance-authority": "^0.7.1",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.511.0",
     "react-grid-layout": "^2.2.3",
     "react-hook-form": "^7.72.0",
