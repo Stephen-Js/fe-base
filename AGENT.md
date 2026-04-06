@@ -6,9 +6,10 @@
 
 这是一个基于 **pnpm workspace + Turborepo** 的 Monorepo 项目，支持多端应用开发：
 
-- **Web**: Next.js 应用 (`apps/web`)
-- **Desktop**: Tauri 桌面应用 (`apps/desktop`)
-- **Mobile**: Expo/React Native 应用 (`apps/mobile`)
+- **Web**: Next.js 应用 (`apps/web`) - React 19
+- **Desktop**: Tauri 桌面应用 (`apps/desktop`) - React 19
+- **Mobile**: Expo/React Native 应用 (`apps/mobile`) - React Native
+- **Taro**: 小程序跨端应用 (`apps/taro`) - React 18
 - **共享包**: 位于 `packages/` 目录下
 
 ## 技术栈
@@ -255,12 +256,14 @@ import { cn } from '@/lib/utils'
 ```
 fe-base/
 ├── apps/                    # 应用目录
-│   ├── web/                 # Next.js Web 应用
-│   ├── desktop/             # Tauri 桌面应用
-│   └── mobile/              # Expo 移动应用
+│   ├── web/                 # Next.js Web 应用 (React 19)
+│   ├── desktop/             # Tauri 桌面应用 (React 19)
+│   ├── mobile/              # Expo 移动应用 (React Native)
+│   └── taro/                # Taro 小程序应用 (React 18)
 ├── packages/                # 共享包
-│   ├── ui/                  # 共享 UI 组件库
+│   ├── ui/                  # Web UI 组件库
 │   ├── ui-native/           # React Native UI 组件
+│   ├── ui-taro/             # Taro 小程序 UI 组件
 │   ├── ui-tokens/           # 设计令牌
 │   ├── api/                 # API 相关
 │   ├── hooks/               # 共享 Hooks
@@ -285,6 +288,7 @@ fe-base/
 |----------|------|------|
 | 通用 UI 组件 | `packages/ui/src/components/` | 可在 Web 和 Desktop 复用 |
 | Native 组件 | `packages/ui-native/src/` | React Native 专用组件 |
+| Taro 组件 | `packages/ui-taro/src/` | Taro 小程序专用组件 |
 | 设计令牌 | `packages/ui-tokens/` | 颜色、间距、字体等变量 |
 | 自定义 Hooks | `packages/hooks/src/` | 可复用的 React Hooks |
 | API 请求 | `packages/api/src/` | 接口定义、请求封装 |
@@ -295,6 +299,7 @@ fe-base/
 | 国际化 | `packages/i18n/src/` | 多语言文案 |
 | 应用页面 | `apps/web/src/app/` | Next.js 页面路由 |
 | 应用组件 | `apps/web/src/components/` | Web 应用专用组件 |
+| 小程序页面 | `apps/taro/src/pages/` | Taro 页面路由 |
 
 **决策流程：**
 
@@ -424,6 +429,124 @@ import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 ```
 
+## Taro 开发规范
+
+Taro 应用 (`apps/taro`) 是独立的跨端项目，有特殊的开发规范。
+
+### React 版本隔离
+
+**重要**: Taro 应用使用 **React 18**，与 Web/Desktop 的 React 19 隔离。
+
+```
+apps/web     → React 19.1.0
+apps/desktop → React 19.1.0
+apps/taro    → React 18.3.1  ← 独立依赖树
+```
+
+### 禁止使用的 API
+
+```typescript
+// ❌ 禁止在 Taro 项目中使用 Next.js 路由 API
+import { useRouter } from 'next/navigation'  // ❌
+import { usePathname } from 'next/navigation' // ❌
+import { useSearchParams } from 'next/navigation' // ❌
+
+// ✅ 使用 Taro 路由 API
+import Taro from '@tarojs/taro'
+
+// 页面跳转
+Taro.navigateTo({ url: '/pages/detail/index' })
+Taro.redirectTo({ url: '/pages/login/index' })
+Taro.switchTab({ url: '/pages/home/index' })
+
+// 获取路由参数
+const router = Taro.getCurrentInstance().router
+const { id } = router?.params || {}
+```
+
+### 组件库规范
+
+```typescript
+// ✅ 使用 NutUI 组件库
+import { Button, Input, Cell, Form } from '@nutui/nutui-react-taro'
+
+// ✅ 使用 Taro 内置组件
+import { View, Text, Image, ScrollView } from '@tarojs/components'
+
+// ✅ 使用 @repo/ui-taro 共享组件
+import { CustomComponent } from '@repo/ui-taro'
+```
+
+### 样式规范
+
+```scss
+/* ✅ 使用 Sass 编写样式（非 Tailwind）*/
+.index {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+
+  &__header {
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 36px;
+    font-weight: bold;
+  }
+}
+```
+
+### 目录结构
+
+```
+apps/taro/
+├── src/
+│   ├── app.config.ts      # 应用配置
+│   ├── app.tsx            # 应用入口
+│   ├── app.scss           # 全局样式
+│   ├── pages/             # 页面目录
+│   │   └── index/
+│   │       ├── index.tsx
+│   │       ├── index.scss
+│   │       └── index.config.ts
+│   └── components/        # 应用级组件
+├── config/                # Taro 配置
+│   └── index.ts
+├── babel.config.js        # Babel 配置
+└── package.json
+```
+
+### 开发命令
+
+```bash
+# 开发模式
+pnpm dev:taro:weapp        # 微信小程序开发
+pnpm dev:taro:h5           # H5 开发
+
+# 构建
+pnpm build:taro:weapp      # 构建微信小程序
+pnpm build:taro:h5         # 构建 H5
+
+# 类型检查
+cd apps/taro && pnpm type-check
+```
+
+### 共享包使用限制
+
+```typescript
+// ✅ 可以使用的共享包
+import type { User } from '@repo/types'        // 纯类型定义
+import { formatDate } from '@repo/utils'       // 纯工具函数
+
+// ⚠️ 需要注意的共享包
+import { useAuthStore } from '@repo/store'     // 需要编译支持
+import { api } from '@repo/api'                // 需要编译支持
+
+// ❌ 不能使用的共享包
+import { Button } from '@repo/ui'              // Web 组件，不兼容 Taro
+```
+
 ## 桶导出模式规范
 
 每个模块目录应包含 `index.ts` 桶导出文件，统一管理模块的导出内容。
@@ -524,6 +647,8 @@ pnpm dev              # 所有应用
 pnpm dev:web          # Web 应用
 pnpm dev:pc           # 桌面应用
 pnpm dev:mobile       # 移动应用
+pnpm dev:taro:weapp   # Taro 微信小程序
+pnpm dev:taro:h5      # Taro H5
 
 # 构建
 pnpm build

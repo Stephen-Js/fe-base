@@ -46,6 +46,7 @@ Any Mind 希望解决的是前端研发中的复用与组合问题：
 - `apps/web`：Web 应用，承载页面展示、组件能力验证、拖拽场景等
 - `apps/desktop`：Desktop 应用，基于 Next.js + Tauri 构建桌面端形态
 - `apps/mobile`：Mobile 应用，基于 Expo / React Native 构建移动端形态
+- `apps/taro`：小程序应用，基于 Taro 构建微信小程序 + H5 跨端形态
 
 应用层本身不追求重复建设能力，而是通过组合共享包中的能力，快速构造不同用途的应用，以适配不同业务场景。
 
@@ -57,6 +58,7 @@ Any Mind 希望解决的是前端研发中的复用与组合问题：
 
 - `packages/ui`：Web 侧 UI 组件库与自定义能力组件
 - `packages/ui-native`：移动端 UI 能力封装
+- `packages/ui-taro`：Taro 小程序 UI 组件封装
 - `packages/pages`：页面级物料与场景示例
 - `packages/ui-tokens`：设计令牌与主题变量
 - `packages/api`：接口请求能力与客户端封装
@@ -81,7 +83,8 @@ fe-base/
 ├── apps/
 │   ├── web/
 │   ├── desktop/
-│   └── mobile/
+│   ├── mobile/
+│   └── taro/
 ├── packages/
 │   ├── api/
 │   ├── hooks/
@@ -92,6 +95,7 @@ fe-base/
 │   ├── types/
 │   ├── ui/
 │   ├── ui-native/
+│   ├── ui-taro/
 │   ├── ui-tokens/
 │   └── utils/
 ├── tooling/
@@ -110,7 +114,8 @@ fe-base/
 - Web / Desktop：Next.js + React 19
 - Desktop 容器：Tauri
 - Mobile：Expo + React Native
-- 样式体系：Tailwind CSS
+- 小程序：Taro 4.x + React 18
+- 样式体系：Tailwind CSS（Web）、Sass（Taro）
 - 表单与校验：React Hook Form + Zod
 - 状态管理：Zustand
 - 代码规范：ESLint + Biome
@@ -165,6 +170,13 @@ pnpm dev:pc
 
 ```bash
 pnpm dev:mobile
+```
+
+启动 Taro 小程序：
+
+```bash
+pnpm dev:taro:weapp    # 微信小程序
+pnpm dev:taro:h5       # H5
 ```
 
 ## 常用命令
