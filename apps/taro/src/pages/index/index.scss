@@ -1,0 +1,31 @@
+.index {
+  padding: 40px;
+  
+  &__header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  &__title {
+    display: block;
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  &__subtitle {
+    display: block;
+    font-size: 28px;
+    color: #666;
+    margin-top: 16px;
+  }
+  
+  &__content {
+    padding: 40px 0;
+    text-align: center;
+  }
+  
+  &__actions {
+    margin-top: 40px;
+  }
+}
