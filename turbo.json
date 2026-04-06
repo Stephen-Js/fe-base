@@ -7,6 +7,14 @@
       "outputs": ["dist/**", ".next/**", "build/**"],
       "env": ["NEXT_PUBLIC_*", "EXPO_PUBLIC_*"]
     },
+    "build:weapp": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "build:h5": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
     "dev": { "cache": false, "persistent": true },
     "lint": {},
     "type-check": {},

@@ -23,6 +23,12 @@ apps/mobile/ios
 *.aab
 *.ipa
 
+# Taro (小程序/H5)
+apps/taro/dist/
+apps/taro/node_modules/
+apps/taro/.temp/
+apps/taro/.rn_temp/
+
 # Environment
 .env
 .env.local
