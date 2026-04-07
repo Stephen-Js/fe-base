@@ -2,7 +2,7 @@
 import { View, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState, useRef, useEffect } from 'react'
-import { Button, Input } from '@nutui/nutui-react-taro'
+import { Button, Input } from '../../lib/nutui'
 import { VoiceInput } from '../../components/voice-input'
 import { ChatMessage } from '../../components/chat-message'
 import { useStreamChat } from '../../hooks/use-stream-chat'

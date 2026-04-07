@@ -1,4 +1,4 @@
-import { Button } from '@nutui/nutui-react-taro'
+import { Button } from '../../lib/nutui'
 import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import './index.scss'
