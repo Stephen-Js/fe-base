@@ -34,9 +34,9 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "@nutui/nutui-react-taro": "^2.7.0",
     "@tarojs/components": "^4.0.0",
     "@tarojs/taro": "^4.0.0",
+    "@taroify/core": "^0.9.2",
     "@repo/types": "workspace:*",
     "@repo/utils": "workspace:*"
   },

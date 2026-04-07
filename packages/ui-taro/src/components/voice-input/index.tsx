@@ -23,7 +23,7 @@ export function VoiceInput({
 }: VoiceInputProps) {
   const [status, setStatus] = useState<VoiceInputStatus>('idle')
   const [intermediateText, setIntermediateText] = useState('')
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const mockTextRef = useRef('')
 
   // 清理定时器

@@ -25,7 +25,7 @@ export default defineConfig(async (env, options) => {
     },
     framework: 'react',
     compiler: {
-      type: 'vite',
+      type: 'vite' as never,
     },
     cache: {
       enable: false,

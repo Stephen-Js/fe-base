@@ -1,4 +1,4 @@
-import { Button } from '../../lib/nutui'
+import { Button } from '@repo/ui-taro/components'
 import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import './index.scss'
@@ -24,7 +24,7 @@ export default function Index() {
       </View>
 
       <View className="index__actions">
-        <Button type="primary" onClick={goToChat}>
+        <Button color="primary" onClick={goToChat}>
           AI 对话
         </Button>
       </View>

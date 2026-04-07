@@ -2,7 +2,7 @@
 import { View, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState, useRef, useEffect } from 'react'
-import { Button, Input } from '../../lib/nutui'
+import { Button, Input } from '@repo/ui-taro/components'
 import { VoiceInput } from '../../components/voice-input'
 import { ChatMessage } from '../../components/chat-message'
 import { useStreamChat } from '../../hooks/use-stream-chat'
@@ -95,13 +95,13 @@ export default function ChatPage() {
           <Input
             className="chat-page__text-input"
             value={textInput}
-            onInput={(e) => setTextInput(e.detail.value)}
+            onChange={(event) => setTextInput(event.detail.value)}
             placeholder="输入消息..."
             disabled={isStreaming}
             onConfirm={handleSend}
           />
           <Button
-            type="primary"
+            color="primary"
             size="small"
             onClick={handleSend}
             disabled={!textInput.trim() || isStreaming}
