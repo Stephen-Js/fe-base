@@ -28,6 +28,8 @@ apps/taro/dist/
 apps/taro/node_modules/
 apps/taro/.temp/
 apps/taro/.rn_temp/
+apps/taro/.swc/
+test-results/
 
 # Environment
 .env
