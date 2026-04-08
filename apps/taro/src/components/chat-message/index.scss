@@ -59,16 +59,134 @@
 
   &__bubble {
     display: inline-flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
     max-width: 80%;
     padding: 16px 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &__chunk {
+    width: 100%;
   }
 
   &__text {
     font-size: 28px;
     line-height: 1.6;
     word-break: break-word;
+  }
+
+  &__markdown {
+    font-size: 28px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &__image-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__image {
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #e9edf5;
+  }
+
+  &__image-alt {
+    font-size: 22px;
+    color: #777;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  &__form-title {
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  &__form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__form-label {
+    font-size: 24px;
+    color: #666;
+  }
+
+  &__form-control {
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(102, 126, 234, 0.16);
+  }
+
+  &__form-placeholder {
+    font-size: 24px;
+    color: #999;
+  }
+
+  &__form-submit {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 20px;
+    border-radius: 999px;
+    background: #667eea;
+  }
+
+  &__form-submit-text {
+    font-size: 24px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__card-title {
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  &__card-desc {
+    font-size: 24px;
+    color: #666;
+  }
+
+  &__status {
+    font-size: 24px;
+  }
+
+  &__status--info {
+    color: #4b7bec;
+  }
+
+  &__status--success {
+    color: #2f9e44;
+  }
+
+  &__status--warning {
+    color: #f08c00;
+  }
+
+  &__status--error {
+    color: #e03131;
   }
 
   &__cursor {

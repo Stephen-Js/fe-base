@@ -1,6 +1,7 @@
 // 聊天消息组件
 import { View, Text } from '@tarojs/components'
 import { ChatMessageProps } from './types'
+import { ChatChunkRenderer } from './renderers'
 import './index.scss'
 
 export function ChatMessage({ message, isTyping = false, className = '' }: ChatMessageProps) {
@@ -17,10 +18,12 @@ export function ChatMessage({ message, isTyping = false, className = '' }: ChatM
 
       {/* 消息内容 */}
       <View className="chat-message__bubble">
-        <Text className="chat-message__text">{message.content}</Text>
-        {isTyping && (
-          <Text className="chat-message__cursor">▋</Text>
-        )}
+        {message.chunks.map((chunk) => (
+          <View key={chunk.id} className={`chat-message__chunk chat-message__chunk--${chunk.type}`}>
+            <ChatChunkRenderer chunk={chunk} />
+          </View>
+        ))}
+        {isTyping && <Text className="chat-message__cursor">▋</Text>}
       </View>
 
       {/* 时间戳 */}

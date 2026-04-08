@@ -76,6 +76,12 @@ export default function ChatPage() {
               <View className="chat-page__tips-item" onClick={() => sendMessage('帮我写一首诗')}>
                 • 帮我写一首诗
               </View>
+              <View className="chat-page__tips-item" onClick={() => sendMessage('给我一张春天的配图')}>
+                • 给我一张春天的配图
+              </View>
+              <View className="chat-page__tips-item" onClick={() => sendMessage('请帮我收集联系方式')}>
+                • 请帮我收集联系方式
+              </View>
             </View>
           </View>
         )}
@@ -83,7 +89,12 @@ export default function ChatPage() {
           <View key={msg.id} id={`msg-${idx}`}>
             <ChatMessage
               message={msg}
-              isTyping={isStreaming && idx === messages.length - 1 && msg.role === 'assistant'}
+              isTyping={
+                isStreaming &&
+                idx === messages.length - 1 &&
+                msg.role === 'assistant' &&
+                msg.status === 'streaming'
+              }
             />
           </View>
         ))}
