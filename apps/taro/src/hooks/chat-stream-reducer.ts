@@ -8,12 +8,16 @@ import type {
 export interface ChatState {
   messages: ChatMessageData[]
   seenEventIds: string[]
+  lastSeqByMessageId: Record<string, number>
+  errors: string[]
 }
 
 export function createEmptyChatState(): ChatState {
   return {
     messages: [],
     seenEventIds: [],
+    lastSeqByMessageId: {},
+    errors: [],
   }
 }
 
@@ -22,9 +26,18 @@ export function applyChatStreamEvent(state: ChatState, event: ChatStreamEvent): 
     return state
   }
 
+  const previousSeq = state.lastSeqByMessageId[event.messageId]
+  if (typeof previousSeq === 'number' && event.seq <= previousSeq) {
+    return appendError(state, `Out-of-order event for message ${event.messageId}: seq ${event.seq} <= ${previousSeq}`)
+  }
+
   const nextState: ChatState = {
     ...state,
     seenEventIds: [...state.seenEventIds, event.eventId],
+    lastSeqByMessageId: {
+      ...state.lastSeqByMessageId,
+      [event.messageId]: event.seq,
+    },
   }
 
   switch (event.type) {
@@ -45,24 +58,39 @@ export function applyChatStreamEvent(state: ChatState, event: ChatStreamEvent): 
         ],
       }
     case 'chunk_appended':
+      if (!hasMessage(nextState, event.messageId)) {
+        return appendError(nextState, `Cannot append chunk to unknown message ${event.messageId}`)
+      }
       return updateMessage(nextState, event.messageId, (message) => ({
         ...message,
         updatedAt: event.timestamp,
         chunks: [...message.chunks, event.chunk].sort((left, right) => left.order - right.order),
       }))
     case 'chunk_patched':
+      if (!hasMessage(nextState, event.messageId)) {
+        return appendError(nextState, `Cannot patch chunk on unknown message ${event.messageId}`)
+      }
+      if (!hasChunk(nextState, event.messageId, event.chunkId)) {
+        return appendError(nextState, `Cannot patch unknown chunk ${event.chunkId} on message ${event.messageId}`)
+      }
       return updateMessage(nextState, event.messageId, (message) => ({
         ...message,
         updatedAt: event.timestamp,
         chunks: message.chunks.map((chunk) => patchChunk(chunk, event.chunkId, event.patch)),
       }))
     case 'message_completed':
+      if (!hasMessage(nextState, event.messageId)) {
+        return appendError(nextState, `Cannot complete unknown message ${event.messageId}`)
+      }
       return updateMessage(nextState, event.messageId, (message) => ({
         ...message,
         status: 'completed',
         updatedAt: event.timestamp,
       }))
     case 'message_failed':
+      if (!hasMessage(nextState, event.messageId)) {
+        return appendError(nextState, `Cannot fail unknown message ${event.messageId}`)
+      }
       return updateMessage(nextState, event.messageId, (message) => ({
         ...message,
         status: 'failed',
@@ -74,6 +102,22 @@ export function applyChatStreamEvent(state: ChatState, event: ChatStreamEvent): 
         },
       }))
   }
+}
+
+function appendError(state: ChatState, error: string): ChatState {
+  return {
+    ...state,
+    errors: [...state.errors, error],
+  }
+}
+
+function hasMessage(state: ChatState, messageId: string): boolean {
+  return state.messages.some((message) => message.id === messageId)
+}
+
+function hasChunk(state: ChatState, messageId: string, chunkId: string): boolean {
+  const message = state.messages.find((entry) => entry.id === messageId)
+  return message?.chunks.some((chunk) => chunk.id === chunkId) ?? false
 }
 
 function updateMessage(

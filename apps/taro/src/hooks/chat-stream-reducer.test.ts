@@ -82,4 +82,69 @@ describe('chat stream reducer', () => {
 
     expect(twice.messages).toHaveLength(1)
   })
+
+  it('records an error for out-of-order events', () => {
+    const started = applyChatStreamEvent(createEmptyChatState(), {
+      type: 'message_started',
+      eventId: 'e1',
+      seq: 2,
+      messageId: 'm1',
+      timestamp: 2,
+      role: 'assistant',
+    })
+
+    const outOfOrder = applyChatStreamEvent(started, {
+      type: 'message_completed',
+      eventId: 'e2',
+      seq: 1,
+      messageId: 'm1',
+      timestamp: 1,
+    })
+
+    expect(outOfOrder.errors).toHaveLength(1)
+    expect(outOfOrder.messages[0]?.status).toBe('streaming')
+  })
+
+  it('records an error when appending a chunk to an unknown message', () => {
+    const state = applyChatStreamEvent(createEmptyChatState(), {
+      type: 'chunk_appended',
+      eventId: 'e1',
+      seq: 1,
+      messageId: 'missing-message',
+      timestamp: 1,
+      chunk: {
+        id: 'c1',
+        type: 'text',
+        status: 'streaming',
+        order: 1,
+        text: '你好',
+      },
+    })
+
+    expect(state.messages).toHaveLength(0)
+    expect(state.errors).toHaveLength(1)
+  })
+
+  it('records an error when patching an unknown chunk', () => {
+    const started = applyChatStreamEvent(createEmptyChatState(), {
+      type: 'message_started',
+      eventId: 'e1',
+      seq: 1,
+      messageId: 'm1',
+      timestamp: 1,
+      role: 'assistant',
+    })
+
+    const patched = applyChatStreamEvent(started, {
+      type: 'chunk_patched',
+      eventId: 'e2',
+      seq: 2,
+      messageId: 'm1',
+      timestamp: 2,
+      chunkId: 'missing-chunk',
+      patch: { op: 'append_text', text: '你好' },
+    })
+
+    expect(patched.errors).toHaveLength(1)
+  })
 })

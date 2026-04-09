@@ -1,31 +1,33 @@
 import { spawn } from 'node:child_process'
+import net from 'node:net'
 import process from 'node:process'
-import { execFileSync } from 'node:child_process'
 
 const PORT = 10086
 
 function ensurePortAvailable(port) {
-  try {
-    const output = execFileSync('lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t'], {
-      stdio: ['ignore', 'pipe', 'ignore'],
-    })
-      .toString()
-      .trim()
+  return new Promise((resolve, reject) => {
+    const server = net.createServer()
 
-    if (output) {
-      throw new Error(`Listener pids: ${output}`)
-    }
-  } catch (error) {
-    if (error instanceof Error && 'status' in error && error.status === 1) {
-      return
-    }
-    throw error
-  }
+    server.once('error', (error) => {
+      reject(error)
+    })
+
+    // Bind on all interfaces so IPv4 / IPv6 listeners are both detected.
+    server.listen(port, () => {
+      server.close((closeError) => {
+        if (closeError) {
+          reject(closeError)
+          return
+        }
+        resolve(undefined)
+      })
+    })
+  })
 }
 
 async function main() {
   try {
-    ensurePortAvailable(PORT)
+    await ensurePortAvailable(PORT)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     console.error(`[taro:h5] Port ${PORT} is already in use. Aborting startup.`)
